@@ -12,23 +12,24 @@
 ├── project-profile.md         ← Project profile (tech stack, scale, modules)
 ├── architecture-diagrams.md   ← 5 Mermaid diagrams (system, modules, data flow, sequence, ER)
 ├── knowledge-graph.md         ← Knowledge graph (entities, relations, JSON for rendering)
+├── feature-map.md             ← Feature map (user-facing capabilities)
 ├── reading-plan.md            ← Smart reading plan
 ├── requirements-draft.md      ← Requirements draft
-└── tech-proposal.md           ← Technical proposal
+├── tech-proposal.md           ← Technical proposal
+└── features/                  ← Feature drill-down (generated on demand)
+    ├── {feature}.md           ← User stories + acceptance criteria + data models
+    └── {feature}/
+        └── req-{name}.md     ← Function-level call chains + modification points
 ```
 
 ## Install
 
-**Option A: Plugin marketplace** (if your marketplace includes this skill)
-```
-/plugin install code-to-req
-```
-
-**Option B: Manual install**
 ```bash
 # Clone to your Claude Code skills directory
-git clone https://github.com/YOUR_ORG/code-to-req.git ~/.claude/skills/code-to-req
+git clone https://github.com/fernandexjulian943-alt/code-to-req.git ~/.claude/skills/code-to-req
 ```
+
+Then use `/code-to-req` in any Claude Code session.
 
 ## Usage
 
@@ -36,12 +37,29 @@ git clone https://github.com/YOUR_ORG/code-to-req.git ~/.claude/skills/code-to-r
 # Full flow: scan → diagrams → analysis → multi-role discussion → report
 /code-to-req <requirement description>
 
-# Quick scan: project profile + architecture diagrams + knowledge graph
+# Quick scan: project profile + architecture diagrams + knowledge graph + feature map
 /code-to-req scan
 
 # Scan + plan: generate a smart reading plan for specific analysis
 /code-to-req plan <requirement description>
+
+# Drill into a specific feature (user stories, acceptance criteria, data models)
+/code-to-req --feature "user auth"
+
+# Drill into a specific requirement (function-level call chains, modification points)
+/code-to-req --feature "user auth" --req "token refresh"
+
+# Analyze a project in a different directory
+/code-to-req --path /path/to/project scan
 ```
+
+## Demo: claw-code Project Analysis
+
+See `examples/claw-code/` for a complete analysis of a Rust CLI project (~1000 files):
+
+- **Scan**: [Project Profile](examples/claw-code/project-profile.md) | [Architecture Diagrams](examples/claw-code/architecture-diagrams.md) | [Knowledge Graph](examples/claw-code/knowledge-graph.md) | [Feature Map](examples/claw-code/feature-map.md)
+- **Feature drill**: [Context Management](examples/claw-code/features/context-management.md) | [Session Resume](examples/claw-code/features/session-resume.md)
+- **Req drill**: [Token Estimation Implementation](examples/claw-code/features/context-management/req-token-estimation.md)
 
 ## Recommended Models
 
@@ -57,11 +75,13 @@ No API key configuration needed — the skill uses whatever model your Claude Co
 
 ## Features
 
+- **Three-layer drill-down**: Scan (skeleton) → Feature (requirements) → Req (implementation details)
 - **Smart scaling**: Adapts strategy based on project size (< 100 to 1000+ files)
 - **5 architecture diagrams**: System layers, module dependencies, data flow, API sequence, ER diagram
 - **Knowledge graph**: Entities + relationships in both Mermaid and JSON format (for sigma.js/D3)
-- **Health scoring**: A/B/C/D ratings across 5 dimensions
+- **Health scoring**: A/B/C/D ratings across 5 dimensions with quantified metrics
 - **Multi-role analysis**: PM + Architect + Developer perspectives with cross-discussion
+- **Anti-hallucination**: All outputs verified via grep/sed before writing (line numbers, counts, logic direction)
 - **Large project support**: Intelligent filtering, sampling, and batched reading
 
 ## How It Works
